@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CurrencyConverter</string>
+    <string name="rates">Rates</string>
+    <string name="hint_zero">0</string>
+    <string name="error">A network error occured</string>
+    <string name="retry">Retry</string>
+</resources>
