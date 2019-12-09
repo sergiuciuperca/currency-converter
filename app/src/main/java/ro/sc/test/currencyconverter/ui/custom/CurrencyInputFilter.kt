@@ -2,6 +2,7 @@ package ro.sc.test.currencyconverter.ui.custom
 
 import android.text.InputFilter
 import android.text.Spanned
+import android.util.Log
 import java.util.regex.Pattern
 
 class CurrencyInputFilter : InputFilter {
@@ -32,7 +33,7 @@ class CurrencyInputFilter : InputFilter {
 
             return null
         } else {
-            if (dstart == 1 && dest[0] == '0' && source == "0") {
+            if (dstart == 1 && dest.firstOrNull() == '0' && ((source?.length ?: 0) > 0 && source?.firstOrNull() != '.')) {
                 return ""
             }
             return null

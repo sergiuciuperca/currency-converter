@@ -57,7 +57,7 @@ class MainActivity : DaggerAppCompatActivity() {
 
         }
 
-        viewModel.uiData().observe(this, Observer {
+        viewModel.itemData().observe(this, Observer {
             if (it.scrollToTop) {
                 currencyAdapter.submitList(it.currencies, Runnable {
                     layoutManager.scrollToPosition(0)
@@ -79,6 +79,10 @@ class MainActivity : DaggerAppCompatActivity() {
                 snackbar.show()
             }
         })
+
+        viewModel.currencyData().observe(this, Observer {
+            currencyAdapter.updateCurrenciesValues(it)
+        })
     }
 
     override fun onResume() {
@@ -89,5 +93,10 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.onLifecycleEvent(true)
+    }
+
+    override fun onDestroy() {
+        currencyAdapter.clear()
+        super.onDestroy()
     }
 }

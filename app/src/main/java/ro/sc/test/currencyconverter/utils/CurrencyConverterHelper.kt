@@ -15,14 +15,13 @@ object CurrencyConverterHelper {
             } else
                 0.0
         }
-
         for ((key, cRate) in rates) {
             convertedValues[key] = currencyValue * cRate
         }
 
         convertedValues[selectedCurrency] = selectedCurrencyValue
         if (baseCurrency != selectedCurrency) {
-            convertedValues[baseCurrency] = selectedCurrencyValue * rate
+            convertedValues[baseCurrency] = selectedCurrencyValue / rate
         }
 
         return convertedValues

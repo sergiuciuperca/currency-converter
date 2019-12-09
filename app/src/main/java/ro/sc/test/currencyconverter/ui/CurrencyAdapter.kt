@@ -9,17 +9,22 @@ import android.widget.EditText
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.item_currency.view.*
 import ro.sc.test.currencyconverter.R
 import ro.sc.test.currencyconverter.ui.custom.CurrencyInputFilter
 import ro.sc.test.currencyconverter.ui.custom.showKeyboard
-import ro.sc.test.currencyconverter.ui.data.CurrencyData
+import ro.sc.test.currencyconverter.ui.data.CurrencyItem
 
 
 class CurrencyAdapter :
-    ListAdapter<CurrencyData, CurrencyAdapter.CurrencyItemViewHolder>(CurrencyDiffCallbacks()) {
+    ListAdapter<CurrencyItem, CurrencyAdapter.CurrencyItemViewHolder>(CurrencyDiffCallbacks()) {
     var callbacks: Callbacks? = null
     private val inputFilter = CurrencyInputFilter()
+    private val convertedCurrenciesSubject: BehaviorSubject<Map<String, String>> = BehaviorSubject.create()
 
     private val itemClickListener = View.OnClickListener { view ->
         val currency = view.getTag(R.id.tag_currency) as? String ?: return@OnClickListener
@@ -74,10 +79,31 @@ class CurrencyAdapter :
         val item = getItem(position)
         holder.itemView.setTag(R.id.tag_currency, item.title)
         holder.value.setTag(R.id.tag_currency, item.title)
+
+//        Log.e("position", "position is $position")
         holder.title.text = item.title
         holder.description.text = item.description
-        holder.value.setText(item.value)
         holder.icon.setImageResource(item.resourceId)
+        holder.observeValueOf(
+            convertedCurrenciesSubject
+                .toFlowable(BackpressureStrategy.LATEST).map {
+                    it[item.title] ?: ""
+                }
+                .distinctUntilChanged()
+        )
+    }
+
+    override fun onViewRecycled(holder: CurrencyItemViewHolder) {
+        holder.stopObserving()
+    }
+
+
+    fun updateCurrenciesValues(newValues: Map<String, String>) {
+        convertedCurrenciesSubject.onNext(newValues)
+    }
+
+    fun clear() {
+        convertedCurrenciesSubject.onComplete()
     }
 
 
@@ -86,14 +112,29 @@ class CurrencyAdapter :
         val title = view.title!!
         val description = view.description!!
         val value = view.input_value!!
+
+        private var disposable: Disposable? = null
+
+        fun observeValueOf(valueFlowable: Flowable<String>) {
+            disposable = valueFlowable.filter { !value.isFocused }
+                .subscribe { newValue ->
+                    value.text.also {
+                        it?.replace(0, it.length, newValue)
+                    }
+                }
+        }
+
+        fun stopObserving() {
+            disposable?.dispose()
+        }
     }
 
-    class CurrencyDiffCallbacks : DiffUtil.ItemCallback<CurrencyData>() {
-        override fun areItemsTheSame(oldItem: CurrencyData, newItem: CurrencyData): Boolean {
+    class CurrencyDiffCallbacks : DiffUtil.ItemCallback<CurrencyItem>() {
+        override fun areItemsTheSame(oldItem: CurrencyItem, newItem: CurrencyItem): Boolean {
             return oldItem.title == newItem.title
         }
 
-        override fun areContentsTheSame(oldItem: CurrencyData, newItem: CurrencyData): Boolean {
+        override fun areContentsTheSame(oldItem: CurrencyItem, newItem: CurrencyItem): Boolean {
             return oldItem == newItem
         }
 
