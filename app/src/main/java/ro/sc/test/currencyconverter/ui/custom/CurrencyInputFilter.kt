@@ -1,8 +1,7 @@
-package ro.sc.test.currencyconverter.ui
+package ro.sc.test.currencyconverter.ui.custom
 
 import android.text.InputFilter
 import android.text.Spanned
-import android.util.Log
 import java.util.regex.Pattern
 
 class CurrencyInputFilter : InputFilter {

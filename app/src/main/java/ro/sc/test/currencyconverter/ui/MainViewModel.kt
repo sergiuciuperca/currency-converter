@@ -14,6 +14,7 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import ro.sc.test.currencyconverter.repo.CurrencyRepo
 import ro.sc.test.currencyconverter.repo.data.CurrencyRatesUpdate
+import ro.sc.test.currencyconverter.ui.data.CurrencyData
 import ro.sc.test.currencyconverter.utils.CurrencyConverterHelper
 import ro.sc.test.currencyconverter.utils.PreferencesManager
 import ro.sc.test.currencyconverter.utils.ResourceUtils
@@ -42,7 +43,11 @@ class MainViewModel @Inject constructor(
                 MainViewState(
                     baseCurrency = currenciesOrder.first(),
                     selectedCurrency = currenciesOrder.first(),
-                    uiData = UIUpdate(currencies = currenciesOrder.map { CurrencyData(title = it) })
+                    uiData = UIUpdate(currencies = currenciesOrder.map {
+                        CurrencyData(
+                            title = it
+                        )
+                    })
                 )
             }
             else -> {

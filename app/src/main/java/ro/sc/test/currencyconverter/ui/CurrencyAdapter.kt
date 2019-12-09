@@ -11,7 +11,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_currency.view.*
 import ro.sc.test.currencyconverter.R
+import ro.sc.test.currencyconverter.ui.custom.CurrencyInputFilter
 import ro.sc.test.currencyconverter.ui.custom.showKeyboard
+import ro.sc.test.currencyconverter.ui.data.CurrencyData
 
 
 class CurrencyAdapter :
