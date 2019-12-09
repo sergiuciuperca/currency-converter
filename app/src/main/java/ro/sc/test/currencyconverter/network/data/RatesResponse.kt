@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class RatesResponse(
     @SerialName("base") val base: String,
-    @SerialName("rates") val ratesxxxxx: Map<String, Double>
+    @SerialName("rates") val rates: Map<String, Double>
 )

@@ -17,7 +17,7 @@ class CurrencyRepo @Inject constructor(private val currencyService: CurrencyServ
             .observeOn(Schedulers.io())
             .switchMapSingle { _ ->
                 currencyService.getCurrentRates(base)
-                    .map { CurrencyRatesUpdate(it.base, it.ratesxxxxx) }
+                    .map { CurrencyRatesUpdate(it.base, it.rates) }
             }
             .onErrorReturn { CurrencyRatesUpdate(error = it) }
     }
